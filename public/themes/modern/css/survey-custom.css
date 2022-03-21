@@ -1,0 +1,35 @@
+/**
+*	Aplikasi Survey Online
+* 	Author	: Agus Prawoto Hadi
+* 	Year	: 2021
+* 	Website	: jagowebdev.com
+*/
+
+.freetext-description li {
+	margin-left: 25px;
+    padding-left: 5px;
+	
+}
+
+figcaption {
+	text-align: center;
+	margin-top: 20px;
+}
+
+.survey-list-image {
+	
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.survey-list-image li{
+	margin-top: 20px;
+	flex: 1 0 235px;
+	margin-left: 0;
+	padding-left: 0;
+	text-align: center;
+	margin-right: 20px;
+}
+figcaption {
+	margin-top: 10px;
+}
