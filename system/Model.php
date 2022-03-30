@@ -102,8 +102,10 @@ class Model extends BaseModel
 		 * @var BaseConnection $db
 		 */
 		$db = $db ?? Database::connect($this->DBGroup);
+		$this->dbpemilu = Database::connect('pemiluDb');
 
 		$this->db = &$db;
+//		$this->dbpemilu = &$dbpemilu;
 
 		parent::__construct($validation);
 	}
