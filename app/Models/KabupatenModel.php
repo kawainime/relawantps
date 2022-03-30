@@ -10,13 +10,13 @@ class KabupatenModel extends \App\Models\BaseModel {
 
     public function getKabupaten($where) {
         $sql = 'SELECT * FROM wil_kab' . $where;
-        $result = $this->db->query($sql)->getResultArray();
+        $result = $this->dbpemilu->query($sql)->getResultArray();
         return $result;
     }
 
     public function getKabupatenById($id) {
         $sql = 'SELECT * FROM wil_kab WHERE id = ?';
-        $result = $this->db->query($sql, $id)->getRowArray();
+        $result = $this->dbpemilu->query($sql, $id)->getRowArray();
         return $result;
     }
 
