@@ -103,6 +103,7 @@ class Model extends BaseModel
 		 */
 		$db = $db ?? Database::connect($this->DBGroup);
 		$this->dbpemilu = Database::connect('pemiluDb');
+		$this->dbdpt = Database::connect('dptDb');
 
 		$this->db = &$db;
 //		$this->dbpemilu = &$dbpemilu;
