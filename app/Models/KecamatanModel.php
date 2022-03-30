@@ -10,13 +10,13 @@ class KecamatanModel extends \App\Models\BaseModel {
 
     public function getKecamatan($where) {
         $sql = 'SELECT * FROM wil_kec' . $where;
-        $result = $this->db->query($sql)->getResultArray();
+        $result = $this->dbpemilu->query($sql)->getResultArray();
         return $result;
     }
 
     public function getKecamatanById($id) {
         $sql = 'SELECT * FROM wil_kec WHERE id = ?';
-        $result = $this->db->query($sql, $id)->getRowArray();
+        $result = $this->dbpemilu->query($sql, $id)->getRowArray();
         return $result;
     }
 
