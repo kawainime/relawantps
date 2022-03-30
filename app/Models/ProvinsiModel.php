@@ -10,13 +10,13 @@ class ProvinsiModel extends \App\Models\BaseModel {
 
     public function getProvinsi($where) {
         $sql = 'SELECT * FROM wil_pro' . $where;
-        $result = $this->db->query($sql)->getResultArray();
+        $result = $this->dbpemilu->query($sql)->getResultArray();
         return $result;
     }
 
     public function getProvinsiById($id) {
         $sql = 'SELECT * FROM wil_pro WHERE id = ?';
-        $result = $this->db->query($sql, $id)->getRowArray();
+        $result = $this->dbdbpemilu->query($sql, $id)->getRowArray();
         return $result;
     }
 
