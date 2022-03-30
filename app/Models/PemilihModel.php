@@ -365,53 +365,53 @@ class PemilihModel extends \App\Models\BaseModel {
         return $result;
     }
 
-    public function getListData($where) {
-
-        $columns = $this->request->getPost('columns');
-
-        // Search
-        $search_all = @$this->request->getPost('search')['value'];
-        if ($search_all) {
-            // Additional Search
-//            $columns[]['data'] = 'tempat_lahir';
-            foreach ($columns as $val) {
-
-                if (strpos($val['data'], 'ignore_search') !== false)
-                    continue;
-
-                if (strpos($val['data'], 'ignore') !== false)
-                    continue;
-
-                $where_col[] = $val['data'] . ' LIKE "%' . $search_all . '%"';
-            }
-            $where .= ' AND (' . join(' OR ', $where_col) . ') ';
-        }
-
-        // Order
-        $start = $this->request->getPost('start') ?: 0;
-        $length = $this->request->getPost('length') ?: 10;
-
-        $order_data = $this->request->getPost('order');
-        $order = '';
-        if (strpos($_POST['columns'][$order_data[0]['column']]['data'], 'ignore_search') === false) {
-            $order_by = $columns[$order_data[0]['column']]['data'] . ' ' . strtoupper($order_data[0]['dir']);
-            $order = ' ORDER BY ' . $order_by . ' LIMIT ' . $start . ', ' . $length;
-        }
-
-        // Query Total Filtered
-        // $sql = 'SELECT COUNT(*) AS jml_data FROM mahasiswa ' . $where;
-        $total_filtered = $this->db
-                ->table('user_relawan')
-                ->where(str_replace('WHERE', '', $where))
-                ->countAllResults();
-
-        // Query Data
-        $sql = 'SELECT * FROM user_relawan 
-				' . $where . $order;
-        $data = $this->db->query($sql)->getResultArray();
-
-        return ['data' => $data, 'total_filtered' => $total_filtered];
-    }
+//    public function getListData($where) {
+//
+//        $columns = $this->request->getPost('columns');
+//
+//        // Search
+//        $search_all = @$this->request->getPost('search')['value'];
+//        if ($search_all) {
+//            // Additional Search
+////            $columns[]['data'] = 'tempat_lahir';
+//            foreach ($columns as $val) {
+//
+//                if (strpos($val['data'], 'ignore_search') !== false)
+//                    continue;
+//
+//                if (strpos($val['data'], 'ignore') !== false)
+//                    continue;
+//
+//                $where_col[] = $val['data'] . ' LIKE "%' . $search_all . '%"';
+//            }
+//            $where .= ' AND (' . join(' OR ', $where_col) . ') ';
+//        }
+//
+//        // Order
+//        $start = $this->request->getPost('start') ?: 0;
+//        $length = $this->request->getPost('length') ?: 10;
+//
+//        $order_data = $this->request->getPost('order');
+//        $order = '';
+//        if (strpos($_POST['columns'][$order_data[0]['column']]['data'], 'ignore_search') === false) {
+//            $order_by = $columns[$order_data[0]['column']]['data'] . ' ' . strtoupper($order_data[0]['dir']);
+//            $order = ' ORDER BY ' . $order_by . ' LIMIT ' . $start . ', ' . $length;
+//        }
+//
+//        // Query Total Filtered
+//        // $sql = 'SELECT COUNT(*) AS jml_data FROM mahasiswa ' . $where;
+//        $total_filtered = $this->db
+//                ->table('user_relawan')
+//                ->where(str_replace('WHERE', '', $where))
+//                ->countAllResults();
+//
+//        // Query Data
+//        $sql = 'SELECT * FROM user_relawan 
+//				' . $where . $order;
+//        $data = $this->db->query($sql)->getResultArray();
+//
+//        return ['data' => $data, 'total_filtered' => $total_filtered];
+//    }
 
     public function getListViewData($where) {
 
@@ -456,6 +456,55 @@ class PemilihModel extends \App\Models\BaseModel {
         // Query Data
 //        print_r($where); exit;
         $sql = 'SELECT * FROM v_pemilih 
+				' . $where . $order;
+        $data = $this->db->query($sql)->getResultArray();
+
+        return ['data' => $data, 'total_filtered' => $total_filtered];
+    }
+
+    public function getListData($where) {
+
+        $columns = $this->request->getPost('columns');
+
+        // Search
+        $search_all = @$this->request->getPost('search')['value'];
+        if ($search_all) {
+            // Additional Search
+//            $columns[]['data'] = 'tempat_lahir';
+            foreach ($columns as $val) {
+
+                if (strpos($val['data'], 'ignore_search') !== false)
+                    continue;
+
+                if (strpos($val['data'], 'ignore') !== false)
+                    continue;
+
+                $where_col[] = $val['data'] . ' LIKE "%' . $search_all . '%"';
+            }
+            $where .= ' AND (' . join(' OR ', $where_col) . ') ';
+        }
+
+        // Order
+        $start = $this->request->getPost('start') ?: 0;
+        $length = $this->request->getPost('length') ?: 10;
+
+        $order_data = $this->request->getPost('order');
+        $order = '';
+        if (strpos($_POST['columns'][$order_data[0]['column']]['data'], 'ignore_search') === false) {
+            $order_by = $columns[$order_data[0]['column']]['data'] . ' ' . strtoupper($order_data[0]['dir']);
+            $order = ' ORDER BY ' . $order_by . ' LIMIT ' . $start . ', ' . $length;
+        }
+
+        // Query Total Filtered
+        // $sql = 'SELECT COUNT(*) AS jml_data FROM mahasiswa ' . $where;
+        $total_filtered = $this->db
+                ->table('pemilih')
+                ->where(str_replace('WHERE', '', $where))
+                ->countAllResults();
+
+        // Query Data
+//        print_r($where); exit;
+        $sql = 'SELECT * FROM pemilih 
 				' . $where . $order;
         $data = $this->db->query($sql)->getResultArray();
 
