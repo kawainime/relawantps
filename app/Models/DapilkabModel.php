@@ -10,13 +10,13 @@ class DapilkabModel extends \App\Models\BaseModel {
 
     public function getDapilkab($where) {
         $sql = 'SELECT * FROM dprd_kab_dapil' . $where;
-        $result = $this->db->query($sql)->getResultArray();
+        $result = $this->dbpemilu->query($sql)->getResultArray();
         return $result;
     }
 
     public function getDapilkabById($id) {
         $sql = 'SELECT * FROM dprd_kab_dapil WHERE id = ?';
-        $result = $this->db->query($sql, $id)->getRowArray();
+        $result = $this->dbpemilu->query($sql, $id)->getRowArray();
         return $result;
     }
 
