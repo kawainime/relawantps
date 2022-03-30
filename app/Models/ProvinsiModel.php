@@ -16,7 +16,7 @@ class ProvinsiModel extends \App\Models\BaseModel {
 
     public function getProvinsiById($id) {
         $sql = 'SELECT * FROM wil_pro WHERE id = ?';
-        $result = $this->dbdbpemilu->query($sql, $id)->getRowArray();
+        $result = $this->dbpemilu->query($sql, $id)->getRowArray();
         return $result;
     }
 
