@@ -51,6 +51,12 @@ class CalegModel extends \App\Models\BaseModel {
         return $result;
     }
 
+    public function getCalegByIdUser($id) {
+        $sql = 'SELECT * FROM user_caleg WHERE id_user = ?';
+        $result = $this->db->query($sql, trim($id))->getRowArray();
+        return $result;
+    }
+
     public function getViewCalegByIdUser($id) {
         $sql = 'SELECT * FROM v_user_caleg WHERE id_user = ?';
         $result = $this->db->query($sql, trim($id))->getRowArray();
