@@ -57,7 +57,7 @@ class Simulasi extends \App\Controllers\BaseController {
             $this->data['setting_registrasi'][$val['param']] = $val['value'];
         }
 
-        $query = $this->modProv->getProvinsi(" where id = 41863");
+        $query = $this->modProv->getProvinsi(" where id > 0");
         $this->data['prov'][''] = '';
         foreach ($query as $key => $val) {
             $this->data['prov'][$val['id']] = $val['nama'];
