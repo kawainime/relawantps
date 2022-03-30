@@ -10,13 +10,13 @@ class KelurahanModel extends \App\Models\BaseModel {
 
     public function getKelurahan($where) {
         $sql = 'SELECT * FROM wil_kel' . $where;
-        $result = $this->db->query($sql)->getResultArray();
+        $result = $this->dbpemilu->query($sql)->getResultArray();
         return $result;
     }
 
     public function getKelurahanById($id) {
         $sql = 'SELECT * FROM wil_kel WHERE id = ?';
-        $result = $this->db->query($sql, $id)->getRowArray();
+        $result = $this->dbpemilu->query($sql, $id)->getRowArray();
         return $result;
     }
 
