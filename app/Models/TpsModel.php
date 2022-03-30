@@ -10,18 +10,18 @@ class TpsModel extends \App\Models\BaseModel {
 
     public function getTps($where) {
         $sql = 'SELECT * FROM wil_tps' . $where;
-        $result = $this->db->query($sql)->getResultArray();
+        $result = $this->dbpemilu->query($sql)->getResultArray();
         return $result;
     }
 
     public function getTpsById($id) {
         $sql = 'SELECT * FROM wil_tps WHERE id = ?';
-        $result = $this->db->query($sql, $id)->getRowArray();
+        $result = $this->dbpemilu->query($sql, $id)->getRowArray();
         return $result;
     }
 
     public function countTps($where = null) {
-        $query = $this->db->query('SELECT COUNT(*) as jml FROM wil_tps' . $where)->getRow();
+        $query = $this->dbpemilu->query('SELECT COUNT(*) as jml FROM wil_tps' . $where)->getRow();
         return $query->jml;
     }
 
