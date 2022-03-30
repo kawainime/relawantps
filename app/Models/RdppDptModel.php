@@ -11,7 +11,7 @@ class RdppDptModel extends \App\Models\BaseModel {
     public function getRdppDpt($idPro, $idKab, $where) {
         $sql = 'SELECT * FROM rdpp_dpt_' . $idPro . '_' . $idKab . ' ' . $where;
 //        print_r($sql); exit;
-        $result = $this->db->query($sql)->getResultArray();
+        $result = $this->dbdpt->query($sql)->getResultArray();
         return $result;
     }
 
@@ -26,13 +26,13 @@ class RdppDptModel extends \App\Models\BaseModel {
 
         $sql = 'SELECT distinct idKec, idKel, noTps, namaTps FROM rdpp_dpt_' . $idPro . '_' . $idKab . ' where ' . $where;
 //        print_r($sql); exit;
-        $result = $this->db->query($sql)->getResultArray();
+        $result = $this->dbdpt->query($sql)->getResultArray();
         return $result;
     }
 
     public function getRdppDptById($id) {
         $sql = 'SELECT * FROM rdpp_dpt_' . $idPro . '_' . $idKab . ' WHERE idDpt = ?';
-        $result = $this->db->query($sql, $id)->getRowArray();
+        $result = $this->dbdpt->query($sql, $id)->getRowArray();
         return $result;
     }
 
