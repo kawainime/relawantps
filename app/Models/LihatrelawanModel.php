@@ -8,6 +8,20 @@ class LihatrelawanModel extends \App\Models\BaseModel {
         parent::__construct();
     }
     
+    public function getTotalRelawanPerkecamatanPercaleg($caleg) {
+        $sql = "select ur.id_kec, count(*) as total from user_relawan ur where ur.id_caleg = $caleg group by ur.id_kec";
+        $result = $this->db->query($sql)->getResultArray();
+        
+        return $result;
+    }
+    
+    public function getTotalTpsPerdapil($dapil, $jmlReal = 0) {
+        $sql = "select count(*) as total_tps, round($jmlReal/count(*), 2)*100 as capaian from wil_tps wt where (wt.dapil like '%,$dapil]' or wt.dapil like '[$dapil,%' or wt.dapil like '%,$dapil,%')";
+        $result = $this->dbpemilu->query($sql)->getRowArray();
+                
+        return $result;
+    }
+    
     public function getRelawanKabupatenPerCaleg($kab, $caleg, $dapil) {
         $sql = "select kec.id, kec.nama as wilayah, sum(if(ur.id_kec is not null, 1, 0)) as total from wil_kec kec left join (select vur.id_kec from v_user_relawan vur where vur.id_caleg = $caleg) ur on ur.id_kec = kec.id where (kec.dapil like '%,$dapil]' or dapil like '[$dapil,%' or dapil like '%,$dapil,%') and kec.kab_id = $kab group by kec.id, kec.nama";
 
@@ -26,6 +40,20 @@ class LihatrelawanModel extends \App\Models\BaseModel {
         return $relawan;
     }
     
+    public function getTotalRelawanPerkelurahanPercaleg($caleg, $kec) {
+        $sql = "select ur.id_kel, count(*) as total from user_relawan ur where ur.id_caleg = $caleg and ur.id_kec = $kec group by ur.id_kel";
+        $result = $this->db->query($sql)->getResultArray();
+        
+        return $result;
+    }
+    
+    public function getTotalTpsPerkecamatan($kec, $jmlReal = 0) {
+        $sql = "select count(*) as total_tps, round($jmlReal/count(*), 2)*100 as capaian from wil_tps wt where wt.kec_id = $kec";
+        $result = $this->dbpemilu->query($sql)->getRowArray();
+                
+        return $result;
+    }
+    
     public function getRelawanKecamatanPerCaleg($kec, $caleg, $dapil) {
         $sql = "select kel.id, kel.nama as wilayah, sum(if(ur.id_kel is not null, 1, 0)) as total from wil_kel kel left join (select vur.id_kel from v_user_relawan vur where vur.id_caleg = $caleg) ur on ur.id_kel = kel.id where (kel.dapil like '%,$dapil]' or kel.dapil like '[$dapil,%' or kel.dapil like '%,$dapil,%') and kel.kec_id = $kec group by kel.id, kel.nama";
 
@@ -42,6 +70,20 @@ class LihatrelawanModel extends \App\Models\BaseModel {
         $relawan[] = $result;
         
         return $relawan;
+    }
+    
+    public function getTotalRelawanPertpsPercaleg($caleg, $kel) {
+        $sql = "select ur.noTps, count(*) as total from user_relawan ur where ur.id_caleg = $caleg and ur.id_kel = $kel group by ur.noTps";
+        $result = $this->db->query($sql)->getResultArray();
+        
+        return $result;
+    }
+    
+    public function getTotalTpsPerkelurahan($kel, $jmlReal = 0) {
+        $sql = "select count(*) as total_tps, round($jmlReal/count(*), 2)*100 as capaian from wil_tps wt where wt.kel_id = $kel";
+        $result = $this->dbpemilu->query($sql)->getRowArray();
+                
+        return $result;
     }
     
     public function getRelawanKelurahanPerCaleg($prov, $kab, $kel, $caleg) {
