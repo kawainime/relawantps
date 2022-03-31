@@ -14,6 +14,9 @@ use App\Models\CalegModel;
 use App\Models\KecamatanModel;
 use App\Models\KelurahanModel;
 use App\Models\LihatrelawanModel;
+use App\Models\ProvinsiModel;
+use App\Models\KabupatenModel;
+use App\Models\RdppDptModel;
 
 class Lihat_relawan extends BaseController {
 
@@ -22,10 +25,13 @@ class Lihat_relawan extends BaseController {
         $this->model = new ChartjsModel;
         $this->modCaleg = new CalegModel;
         ;
+        $this->modProv = new ProvinsiModel;
+        $this->modKab = new KabupatenModel;
         $this->modKec = new KecamatanModel;
         $this->modKel = new KelurahanModel;
+        $this->modTps = new RdppDptModel;
         $this->modelLR = new LihatrelawanModel;
-        
+
         $this->addJs($this->config->baseURL . 'public/vendors/chartjs/Chart.bundle.min.js');
         $this->addStyle($this->config->baseURL . 'public/vendors/chartjs/Chart.min.css');
 
@@ -55,45 +61,131 @@ class Lihat_relawan extends BaseController {
         $this->data['item_terjual'] = $this->model->getItemTerjual($tahun);
         $this->data['tahun'] = $tahun;
 
-        $this->data['caleg'] = $this->modCaleg->getViewCalegByIdUser($this->session->get('user')['id_user']);
+//        $this->data['caleg'] = $this->modCaleg->getViewCalegByIdUser($this->session->get('user')['id_user']);
+//        $dapil = $this->data['caleg']['id_dapil'];
+
+        $this->data['caleg'] = $this->modCaleg->getCalegByIdUser($this->session->get('user')['id_user']);
+
+        $query = $this->modProv->getProvinsiById($this->data['caleg']['id_prov']);
+        $this->data['caleg']['provinsi'] = $query['nama'];
+
+        $query = $this->modKab->getKabupatenById($this->data['caleg']['id_kab']);
+        $this->data['caleg']['kabupaten'] = $query['nama'];
+
         $dapil = $this->data['caleg']['id_dapil'];
+//        $query = $this->modKec->getKecamatan(" where dapil like '%,$dapil]' or dapil like '[$dapil,%' or dapil like '%,$dapil,%'");
 
-        if (!empty($_GET['id_kel'])) {
-            $relawan = $this->modelLR->getRelawanKelurahanPerCaleg($this->data['caleg']['id_prov'], $this->data['caleg']['id_kab'], $_GET['id_kel'], $this->session->get('user')['id_user']);
-            
-            $this->data['relawan'] = $relawan[0];
-            $this->data['total_tps'] = $relawan[1]['total_tps'];
-            $this->data['capaian'] = $relawan[1]['capaian'];
-            
-            $kel = $this->modKel->getKelurahanById($_GET['id_kel']);
-            $this->data['label'] = "Kelurahan ".$kel['nama'];
-        } elseif (!empty($_GET['id_kec'])) {
-            $relawan = $this->modelLR->getRelawanKecamatanPerCaleg($_GET['id_kec'], $this->session->get('user')['id_user'], $dapil);
-            
-            $this->data['relawan'] = $relawan[0];
-            $this->data['total_tps'] = $relawan[1]['total_tps'];
-            $this->data['capaian'] = $relawan[1]['capaian'];
-            
-            $kec = $this->modKec->getKecamatanById($_GET['id_kec']);
-            $this->data['label'] = "Kecamatan ".$kec['nama'];
-        } else {
-            $relawan = $this->modelLR->getRelawanKabupatenPerCaleg($this->data['caleg']['id_kab'], $this->session->get('user')['id_user'], $dapil);
-            
-            $this->data['relawan'] = $relawan[0];
-            $this->data['total_tps'] = $relawan[1]['total_tps'];
-            $this->data['capaian'] = $relawan[1]['capaian'];
-            
-            $this->data['label'] = "Kota/Kabupaten ".$this->data['caleg']['kabupaten'];
-            
-//            print_r($this->data['relawan']); exit;
-        }
-
-        $query = $this->modKec->getKecamatan(" where dapil like '%,$dapil]' or dapil like '[$dapil,%' or dapil like '%,$dapil,%'");
+        $qKec = $this->modKec->getKecamatan(" where dapil like '%,$dapil]' or dapil like '[$dapil,%' or dapil like '%,$dapil,%'");
 
 //        $query = $this->modProv->getProvinsi(" where id = 41863");
         $this->data['kec'][''] = '';
-        foreach ($query as $key => $val) {
+        foreach ($qKec as $key => $val) {
             $this->data['kec'][$val['id']] = $val['nama'];
+        }
+
+        if (!empty($_GET['id_kel'])) {
+//            $relawan = $this->modelLR->getRelawanKelurahanPerCaleg($this->data['caleg']['id_prov'], $this->data['caleg']['id_kab'], $_GET['id_kel'], $this->session->get('user')['id_user']);
+
+            $trcc = $this->modelLR->getTotalRelawanPertpsPercaleg($this->session->get('user')['id_user'], $_GET['id_kel']);
+            $total = 0;
+            foreach ($trcc as $key => $value) {
+                $jml[$value['noTps']] = $value['total'];
+                $total = $total + $value['total'];
+            }
+            
+            $qTps = $this->modTps->getTpsRdppDpt($this->data['caleg']['id_prov'], $this->data['caleg']['id_kab'], " where idKel = ".$_GET['id_kel']);
+
+            $relawan[0] = array();
+//            print_r($relawan[0]); exit;
+            foreach ($qTps as $key => $value) {
+                $dt['noTps'] = $value['noTps'];
+                $dt['wilayah'] = $value['noTps'];
+
+                if (isset($jml[$value['noTps']])) {
+                    $dt['total'] = $jml[$value['noTps']];
+                }
+                else {
+                    $dt['total'] = 0;
+                }
+                
+                $relawan[0][] = $dt;
+            }
+            
+            $relawan[1] = $this->modelLR->getTotalTpsPerkelurahan($_GET['id_kel'], $total);
+
+            $this->data['relawan'] = $relawan[0];
+            $this->data['total_tps'] = $relawan[1]['total_tps'];
+            $this->data['capaian'] = $relawan[1]['capaian'];
+
+            $kel = $this->modKel->getKelurahanById($_GET['id_kel']);
+            $this->data['label'] = "Kelurahan " . $kel['nama'];
+        } elseif (!empty($_GET['id_kec'])) {
+//            $relawan = $this->modelLR->getRelawanKecamatanPerCaleg($_GET['id_kec'], $this->session->get('user')['id_user'], $dapil);
+
+            $trcc = $this->modelLR->getTotalRelawanPerkelurahanPercaleg($this->session->get('user')['id_user'], $_GET['id_kec']);
+            $total = 0;
+            foreach ($trcc as $key => $value) {
+                $jml[$value['id_kel']] = $value['total'];
+                $total = $total + $value['total'];
+            }
+            
+            $qKel = $this->modKel->getKelurahan(" where parent_id = ".$_GET['id_kec']);
+
+            $relawan[0] = array();
+            foreach ($qKel as $key => $value) {
+                $dt['id'] = $value['id'];
+                $dt['wilayah'] = $value['nama'];
+
+                if (isset($jml[$value['id']]))
+                    $dt['total'] = $jml[$value['id']];
+                else {
+                    $dt['total'] = 0;
+                }
+                
+                $relawan[0][] = $dt;
+            }
+            
+            $relawan[1] = $this->modelLR->getTotalTpsPerkecamatan($_GET['id_kec'], $total);
+
+            $this->data['relawan'] = $relawan[0];
+            $this->data['total_tps'] = $relawan[1]['total_tps'];
+            $this->data['capaian'] = $relawan[1]['capaian'];
+
+            $kec = $this->modKec->getKecamatanById($_GET['id_kec']);
+            $this->data['label'] = "Kecamatan " . $kec['nama'];
+        } else {
+//            $relawan = $this->modelLR->getRelawanKabupatenPerCaleg($this->data['caleg']['id_kab'], $this->session->get('user')['id_user'], $dapil);
+
+            $trcc = $this->modelLR->getTotalRelawanPerkecamatanPercaleg($this->session->get('user')['id_user']);
+            $total = 0;
+            foreach ($trcc as $key => $value) {
+                $jml[$value['id_kec']] = $value['total'];
+                $total = $total + $value['total'];
+            }
+
+            $relawan[0] = array();
+            foreach ($qKec as $key => $value) {
+                $dt['id'] = $value['id'];
+                $dt['wilayah'] = $value['nama'];
+
+                if (isset($jml[$value['id']]))
+                    $dt['total'] = $jml[$value['id']];
+                else {
+                    $dt['total'] = 0;
+                }
+                
+                $relawan[0][] = $dt;
+            }
+            
+            $relawan[1] = $this->modelLR->getTotalTpsPerdapil($dapil, $total);
+
+            $this->data['relawan'] = $relawan[0];
+            $this->data['total_tps'] = $relawan[1]['total_tps'];
+            $this->data['capaian'] = $relawan[1]['capaian'];
+
+            $this->data['label'] = "Kota/Kabupaten " . $this->data['caleg']['kabupaten'];
+
+//            print_r($this->data['relawan']); exit;
         }
 
         $this->data['message']['status'] = 'ok';
