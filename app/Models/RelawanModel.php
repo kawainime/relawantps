@@ -9,6 +9,12 @@
 
 namespace App\Models;
 
+use App\Models\ProvinsiModel;
+use App\Models\KabupatenModel;
+use App\Models\KecamatanModel;
+use App\Models\KelurahanModel;
+use App\Models\UserModel;
+
 class RelawanModel extends \App\Models\BaseModel {
 
     private $fotoPath;
@@ -16,6 +22,18 @@ class RelawanModel extends \App\Models\BaseModel {
     public function __construct() {
         parent::__construct();
         $this->fotoPath = 'public/images/foto/';
+
+        $this->modProv = new ProvinsiModel;
+        $this->modKab = new KabupatenModel;
+        $this->modKec = new KecamatanModel;
+        $this->modKel = new KelurahanModel;
+        $this->modUser = new UserModel;
+    }
+
+    public function getRelawan($where) {
+        $sql = 'SELECT * FROM user_relawan' . $where;
+        $result = $this->db->query($sql)->getResultArray();
+        return $result;
     }
 
     public function deleteData() {
@@ -48,12 +66,28 @@ class RelawanModel extends \App\Models\BaseModel {
     public function getRelawanByIdUser($id) {
         $sql = 'SELECT * FROM user_relawan WHERE id_user = ?';
         $result = $this->db->query($sql, trim($id))->getRowArray();
+
+        $prov = $this->modProv->getProvinsiById($result['id_prov']);
+        $kab = $this->modKab->getKabupatenById($result['id_kab']);
+        $kec = $this->modKec->getKecamatanById($result['id_kec']);
+        $kel = $this->modKel->getKelurahanById($result['id_kel']);
+        $user = $this->modUser->getPenggunaById($result['id_user']);
+
+        $result['provinsi'] = $prov['nama'];
+        $result['kabupaten'] = $kab['nama'];
+        $result['kecamatan'] = $kec['nama'];
+        $result['kelurahan'] = $kel['nama'];
+        $result['avatar'] = $user['nama'];
+        $result['username'] = $user['username'];
+        $result['email'] = $user['email'];
+
         return $result;
     }
 
     public function getViewRelawanByIdUser($id) {
         $sql = 'SELECT * FROM v_user_relawan WHERE id_user = ?';
         $result = $this->db->query($sql, trim($id))->getRowArray();
+
         return $result;
     }
 
