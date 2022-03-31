@@ -9,6 +9,10 @@
 
 namespace App\Models;
 
+use App\Models\ProvinsiModel;
+use App\Models\KabupatenModel;
+use App\Models\DapilkabModel;
+
 class CalegModel extends \App\Models\BaseModel {
 
     private $fotoPath;
@@ -16,6 +20,10 @@ class CalegModel extends \App\Models\BaseModel {
     public function __construct() {
         parent::__construct();
         $this->fotoPath = 'public/images/foto/';
+
+        $this->modProv = new ProvinsiModel;
+        $this->modKab = new KabupatenModel;
+        $this->modDapilKab = new DapilkabModel;
     }
 
     public function getViewCaleg($where) {
@@ -54,6 +62,15 @@ class CalegModel extends \App\Models\BaseModel {
     public function getCalegByIdUser($id) {
         $sql = 'SELECT * FROM user_caleg WHERE id_user = ?';
         $result = $this->db->query($sql, trim($id))->getRowArray();
+
+        $prov = $this->modProv->getProvinsiById($result['id_prov']);
+        $kab = $this->modKab->getKabupatenById($result['id_kab']);
+        $dapilKab = $this->modDapilKab->getDapilkabById($result['id_dapil']);
+
+        $result['provinsi'] = $prov['nama'];
+        $result['kabupaten'] = $kab['nama'];
+        $result['dapil'] = $dapilKab['nama'];
+        
         return $result;
     }
 
