@@ -91,7 +91,8 @@ class Create_pemilih extends \App\Controllers\BaseController {
             }
         }
         
-        $data['relawan'] = $this->modRelawan->getViewRelawanByIdUser($this->session->get('user')['id_user']);
+//        $data['relawan'] = $this->modRelawan->getViewRelawanByIdUser($this->session->get('user')['id_user']);
+        $data['relawan'] = $this->modRelawan->getRelawanByIdUser($this->session->get('user')['id_user']);
 //        $dapil = $data['caleg']['id_dapil'];
 
         $query = $this->modRD->getRdppDpt($data['relawan']['id_prov'], $data['relawan']['id_kab'], " where idKec = ".$data['relawan']['id_kec']." and idKel = ".$data['relawan']['id_kel']." and noTps = ".$data['relawan']['noTps']." and idDpt <> '".$data['relawan']['idDpt']."'");
@@ -189,7 +190,8 @@ class Create_pemilih extends \App\Controllers\BaseController {
 //            $data['prov'][$val['id']] = $val['nama'];
 //        }
 
-        $data_pemilih = $this->model->getViewPemilihById($_GET['id']);
+//        $data_pemilih = $this->model->getViewPemilihById($_GET['id']);
+        $data_pemilih = $this->model->getPemilihById($_GET['id']);
         if (empty($data_pemilih)) {
             $this->errorDataNotFound();
         }
@@ -206,7 +208,8 @@ class Create_pemilih extends \App\Controllers\BaseController {
         $result['draw'] = $start = $this->request->getPost('draw') ?: 1;
         $result['recordsTotal'] = $num_data;
 
-        $query = $this->model->getListViewData($this->whereOwn('id_relawan'));
+//        $query = $this->model->getListViewData($this->whereOwn('id_relawan'));
+        $query = $this->model->getListData($this->whereOwn('id_relawan'));
         $result['recordsFiltered'] = $query['total_filtered'];
 
         helper('html');
