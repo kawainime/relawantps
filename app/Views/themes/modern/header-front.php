@@ -1,7 +1,7 @@
 
 <!DOCTYPE HTML>
 <html lang="en">
-    <title>Survey Online | Jagowebdev</title>
+    <title>Relawan TPS | Katapedia.id</title>
     <meta name="descrition" content="Survey online dengan berbagai fitur menarik dan fleksibel untuk digunakan"/>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
