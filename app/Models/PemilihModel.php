@@ -9,6 +9,12 @@
 
 namespace App\Models;
 
+use App\Models\ProvinsiModel;
+use App\Models\KabupatenModel;
+use App\Models\KecamatanModel;
+use App\Models\KelurahanModel;
+use App\Models\RelawanModel;
+
 class PemilihModel extends \App\Models\BaseModel {
 
     private $fotoPath;
@@ -16,6 +22,12 @@ class PemilihModel extends \App\Models\BaseModel {
     public function __construct() {
         parent::__construct();
         $this->fotoPath = 'public/images/foto/';
+        
+        $this->modProv = new ProvinsiModel;
+        $this->modKab = new KabupatenModel;
+        $this->modKec = new KecamatanModel;
+        $this->modKel = new KelurahanModel;
+        $this->modRel = new RelawanModel;
     }
 
     public function deleteData() {
@@ -36,6 +48,17 @@ class PemilihModel extends \App\Models\BaseModel {
     public function getPemilihById($id) {
         $sql = 'SELECT * FROM pemilih WHERE id = ?';
         $result = $this->db->query($sql, trim($id))->getRowArray();
+
+        $prov = $this->modProv->getProvinsiById($result['id_prov']);
+        $kab = $this->modKab->getKabupatenById($result['id_kab']);
+        $kec = $this->modKec->getKecamatanById($result['id_kec']);
+        $kel = $this->modKel->getKelurahanById($result['id_kel']);
+
+        $result['provinsi'] = $prov['nama'];
+        $result['kabupaten'] = $kab['nama'];
+        $result['kecamatan'] = $kec['nama'];
+        $result['kelurahan'] = $kel['nama'];
+        
         return $result;
     }
 
@@ -502,11 +525,24 @@ class PemilihModel extends \App\Models\BaseModel {
                 ->where(str_replace('WHERE', '', $where))
                 ->countAllResults();
 
+        $relawan = $this->modRel->getRelawanByIdUser($_SESSION['user']['id_user']);
+        
+        $prov = $this->modProv->getProvinsiById($relawan['id_prov']);
+        $kab = $this->modKab->getKabupatenById($relawan['id_kab']);
+        $kec = $this->modKec->getKecamatanById($relawan['id_kec']);
+        $kel = $this->modKel->getKelurahanById($relawan['id_kel']);
         // Query Data
-//        print_r($where); exit;
+//        print_r($kel); exit;
         $sql = 'SELECT * FROM pemilih 
 				' . $where . $order;
         $data = $this->db->query($sql)->getResultArray();
+        
+        foreach ($data as $key => $value) {
+            $data[$key]['provinsi'] = $prov['nama'];
+            $data[$key]['kabupaten'] = $kab['nama'];
+            $data[$key]['kecamatan'] = $kec['nama'];
+            $data[$key]['kelurahan'] = $kel['nama'];
+        }
 
         return ['data' => $data, 'total_filtered' => $total_filtered];
     }
