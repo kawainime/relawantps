@@ -14,6 +14,13 @@ class RdppDptModel extends \App\Models\BaseModel {
         $result = $this->dbdpt->query($sql)->getResultArray();
         return $result;
     }
+    
+    public function getTpsRdppDpt($idPro, $idKab, $where) {
+        $sql = 'SELECT idKel, noTps FROM rdpp_dpt_' . $idPro . '_' . $idKab . ' ' . $where.' group by idKel, noTps';
+//        print_r($sql); exit;
+        $result = $this->dbdpt->query($sql)->getResultArray();
+        return $result;
+    }
 
     public function getTpsByKelurahan($idPro, $idKab, $idKec = null, $idKel) {
         if ($idKel) {
