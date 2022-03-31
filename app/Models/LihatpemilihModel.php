@@ -2,10 +2,35 @@
 
 namespace App\Models;
 
+use App\Models\KecamatanModel;
+
 class LihatpemilihModel extends \App\Models\BaseModel {
 
     public function __construct() {
         parent::__construct();
+        
+        $this->modKec = new KecamatanModel;
+    }
+    
+    public function getTotalPemilihPerkecamatanPercaleg($caleg) {
+        $sql = "select p.id_kec, count(*) as total from pemilih p join user_relawan ur on p.id_relawan = ur.id_user where ur.id_caleg = $caleg group by p.id_kec";
+        $result = $this->db->query($sql)->getResultArray();
+        
+        return $result;
+    }
+    
+    public function getTotalPemilihPerdapil($prov, $kab, $dapil, $jmlReal = 0) {
+        $qKec = $this->modKec->getKecamatan(" where (dapil like '%,$dapil]' or dapil like '[$dapil,%' or dapil like '%,$dapil,%')");
+        $aKec = array();
+        foreach ($qKec as $key => $value) {
+            $aKec[] = $value['id'];
+        }
+        $kec = implode(',', $aKec);
+        
+        $sql = "select count(*) as total_tps, round($jmlReal/count(*), 2)*100 as capaian from rdpp_dpt_".$prov."_".$kab." rd where rd.idKec in ($kec)";
+        $result = $this->dbdpt->query($sql)->getRowArray();
+                
+        return $result;
     }
     
     public function getPemilihKabupatenPerCaleg($prov, $kab, $caleg, $dapil) {
@@ -27,6 +52,20 @@ class LihatpemilihModel extends \App\Models\BaseModel {
         return $relawan;
     }
     
+    public function getTotalPemilihPerkelurahanPercaleg($caleg, $kec) {
+        $sql = "select p.id_kel, count(*) as total from pemilih p join user_relawan ur on p.id_relawan = ur.id_user where ur.id_caleg = $caleg  and p.id_kec = $kec group by p.id_kel";
+        $result = $this->db->query($sql)->getResultArray();
+        
+        return $result;
+    }
+    
+    public function getTotalPemilihPerkecamatan($prov, $kab, $kec, $jmlReal = 0) {
+        $sql = "select count(*) as total_tps, round($jmlReal/count(*), 2)*100 as capaian from rdpp_dpt_".$prov."_".$kab." rd where rd.idKec = $kec";
+        $result = $this->dbdpt->query($sql)->getRowArray();
+                
+        return $result;
+    }
+    
     public function getPemilihKecamatanPerCaleg($prov, $kab, $kec, $caleg, $dapil) {
         $sql = "select kec.id, kec.nama as wilayah, sum(if(p.id is not null, 1, 0)) as total from wil_kel kec left join (select vur.id_kel, vur.id_user from v_user_relawan vur where vur.id_caleg = $caleg) ur on ur.id_kel = kec.id left join pemilih p on p.id_relawan = ur.id_user and p.id_kel = kec.id where (kec.dapil like '%,$dapil]' or dapil like '[$dapil,%' or dapil like '%,$dapil,%') and kec.kec_id = $kec group by kec.id, kec.nama order by kec.nama";
 
@@ -44,6 +83,20 @@ class LihatpemilihModel extends \App\Models\BaseModel {
         $relawan[] = $result;
                 
         return $relawan;
+    }
+    
+    public function getTotalPemilihTpsPercaleg($caleg, $kel) {
+        $sql = "select p.noTps, count(*) as total from pemilih p join user_relawan ur on p.id_relawan = ur.id_user where ur.id_caleg = $caleg  and p.id_kel = $kel group by p.noTps";
+        $result = $this->db->query($sql)->getResultArray();
+        
+        return $result;
+    }
+    
+    public function getTotalPemilihPerkelurahan($prov, $kab, $kel, $jmlReal = 0) {
+        $sql = "select count(*) as total_tps, round($jmlReal/count(*), 2)*100 as capaian from rdpp_dpt_".$prov."_".$kab." rd where rd.idKel = $kel";
+        $result = $this->dbdpt->query($sql)->getRowArray();
+                
+        return $result;
     }
     
     public function getPemilihKelurahanPerCaleg($prov, $kab, $kel, $caleg, $dapil) {
