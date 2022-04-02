@@ -75,7 +75,7 @@
                 <label>Password</label>
                 <input type="password"  id="password" name="password" class="form-control register-input" placeholder="Password" aria-label="Password" required>
                 <div class="pwstrength_viewport_progress"></div>
-                <p class="small">Bantu kami untuk melindungi data Anda dengan membuat password yang kuat, indikator: medium-strong, min 8 karakter, paling sedikit mengandung huruf kecil, huruf besar, dan angka.</p>
+<!--                <p class="small">Bantu kami untuk melindungi data Anda dengan membuat password yang kuat, indikator: medium-strong, min 8 karakter, paling sedikit mengandung huruf kecil, huruf besar, dan angka.</p>-->
             </div>
             <div class="form-group mb-3">
                 <label>Confirm Password</label>
