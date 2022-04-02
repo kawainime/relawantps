@@ -300,16 +300,16 @@ class Register extends \App\Controllers\BaseController {
 
         if ($validate) {
             // Passsword
-            $invalid = password_requirements($_POST['password']);
-            if ($invalid) {
-                $error = array_merge($error, $invalid);
-            }
+//            $invalid = password_requirements($_POST['password']);
+//            if ($invalid) {
+//                $error = array_merge($error, $invalid);
+//            }
 
             // Email
-            $invalid = email_requirements($_POST['email']);
-            if ($invalid) {
-                $error = array_merge($error, $invalid);
-            }
+//            $invalid = email_requirements($_POST['email']);
+//            if ($invalid) {
+//                $error = array_merge($error, $invalid);
+//            }
         } else {
             $error = $validation->getErrors();
         }
