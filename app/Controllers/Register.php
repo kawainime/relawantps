@@ -75,7 +75,7 @@ class Register extends \App\Controllers\BaseController {
             }
         }
 
-        $query = $this->modProv->getProvinsi(" where id = 41863");
+        $query = $this->modProv->getProvinsi(" where id > 0");
         $this->data['prov'][''] = '';
         foreach ($query as $key => $val) {
             $this->data['prov'][$val['id']] = $val['nama'];
