@@ -34,4 +34,12 @@ jQuery(document).ready(function () {
             },
         });
     });
+
+    $("#form-register").submit(function () {
+        if ($("#password").val() != $("#password_confirm").val())
+        {
+            alert("Confirm Password tidak cocok dengan Password");
+            return false;
+        }
+    });
 });
