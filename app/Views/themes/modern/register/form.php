@@ -13,7 +13,7 @@
         helper('form');
         helper('html');
         ?>
-        <form action="<?= current_url() ?>" method="post" accept-charset="utf-8">
+        <form action="<?= current_url() ?>" method="post" accept-charset="utf-8" id="form-register">
 
             <!--<p class="mb-4" style="text-align:center">Komitmen kami: kami akan berusaha semaksimal mungkin menyimpan data Anda dengan aman dan <strong>tidak akan membagi data Anda</strong> ke siapapun</p>-->
             <div class="form-group mb-3">
@@ -73,13 +73,13 @@
             </div>
             <div class="form-group mb-3">
                 <label>Password</label>
-                <input type="password"  name="password" class="form-control register-input" placeholder="Password" aria-label="Password" required>
+                <input type="password"  id="password" name="password" class="form-control register-input" placeholder="Password" aria-label="Password" required>
                 <div class="pwstrength_viewport_progress"></div>
                 <p class="small">Bantu kami untuk melindungi data Anda dengan membuat password yang kuat, indikator: medium-strong, min 8 karakter, paling sedikit mengandung huruf kecil, huruf besar, dan angka.</p>
             </div>
             <div class="form-group mb-3">
                 <label>Confirm Password</label>
-                <input type="password"  name="password_confirm" class="form-control register-input" placeholder="Confirm Password" aria-label="Confirm Password" required>
+                <input type="password"  id="password_confirm" name="password_confirm" class="form-control register-input" placeholder="Confirm Password" aria-label="Confirm Password" required>
             </div>
             <div class="form-group mb-3" style="margin-bottom:0">
                 <input type="hidden" name="id_role" value="12"/>
@@ -87,6 +87,7 @@
                 <button type="submit" name="submit" value="submit" class="btn btn-success" style="display:block;width:100%">Register</button>
                 <?= csrf_formfield() ?>
             </div>
+        </form>
     </div>
 <!--    <div class="login-footer">
         <p>Lupa Password? <a href="<?= $config->baseURL ?>recovery">Request reset password</a></p>
