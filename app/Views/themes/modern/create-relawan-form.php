@@ -67,7 +67,7 @@
                     <div class="col-sm-5">
                         <?php
                         $optionsKel[''] = '';
-                        echo options(['class' => 'form-control select2 kecSelect', 'name' => 'id_kel', 'id' => 'id_kel'], $optionsKel);
+                        echo options(['class' => 'form-control select2 kecSelect', 'name' => 'id_kel', 'id' => 'id_kel', 'required' => ''], $optionsKel);
                         ?>
                     </div>
                 </div>
@@ -85,7 +85,7 @@
                     <div class="col-sm-6">
                         <?php
                         $optionsTps[''] = '';
-                        echo options(['class' => 'form-control select2 kecSelect', 'name' => 'idDpt', 'id' => 'idDpt'], $optionsTps);
+                        echo options(['class' => 'form-control select2 kecSelect', 'name' => 'idDpt', 'id' => 'idDpt', 'required' => ''], $optionsTps);
                         ?>
                     </div>
                 </div>
