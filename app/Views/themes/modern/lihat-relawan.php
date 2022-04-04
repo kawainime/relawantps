@@ -69,9 +69,9 @@
                 <div class="col-12 col-md-12 col-lg-12 col-xl-6" style="overflow-x:auto">
                     <canvas id="bar-container" height="400px" style="min-width:500px;margin:auto;width:100%"></canvas>
                 </div>
-                <div class="col-12 col-md-12 col-lg-12 col-xl-6" style="overflow-x:auto">
+<!--                <div class="col-12 col-md-12 col-lg-12 col-xl-6" style="overflow-x:auto">
                     <canvas id="pie-container" style="min-width:400px;margin:auto;width:500px"></canvas>
-                </div>
+                </div>-->
             </div>
 
             <script>
