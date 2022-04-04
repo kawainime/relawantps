@@ -89,7 +89,7 @@ class CalegModel extends \App\Models\BaseModel {
 
         if (isset($_POST['idDpt'])) {
             $sql = 'SELECT * FROM rdpp_dpt_' . $_POST['id_prov'] . '_' . $_POST['id_kab'] . ' WHERE idDpt = ?';
-            $result = $this->db->query($sql, $_POST['idDpt'])->getRowArray();
+            $result = $this->dbdpt->query($sql, $_POST['idDpt'])->getRowArray();
 
             $data_db['nik'] = $result['nik'];
             $data_db['nama'] = $result['nama'];
