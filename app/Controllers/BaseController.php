@@ -287,11 +287,18 @@ class BaseController extends Controller {
             }
         }
     }
+    
+    protected function cekHakAksesAja($action) {
+        $allowed = $this->actionUser[$action];
+        
+        return $allowed;
+    }
 
     protected function cekHakAkses($action, $table_column = null, $column_check = null) {
 
         $action_title = ['read_data' => 'membuka data', 'create_data' => 'menambah data', 'update_data' => 'mengubah data', 'delete_data' => 'menghapus data'];
         $allowed = $this->actionUser[$action];
+//        print_r($allowed); exit;
 
         if ($allowed == 'no') {
             $this->currentModule['nama_module'] = 'error';
