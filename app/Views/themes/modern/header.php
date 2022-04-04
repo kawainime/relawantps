@@ -100,7 +100,9 @@
             <div class="pull-right nav-header nav-header-right">
 
                 <ul>
+                    <?php if ($boleh_setting) { ?>
                     <li><a class="icon-link" href="<?= $config->baseURL ?>builtin/setting"><i class="fas fa-cog"></i></a></li>
+                    <?php } ?>
                     <li>
 <?php
 $img_url = !empty($user['avatar']) && file_exists(ROOTPATH . '/public/images/user/' . $user['avatar']) ? $config->baseURL . '/public/images/user/' . $user['avatar'] : $config->baseURL . '/public/images/user/default.png';
