@@ -106,7 +106,7 @@ class BaseController extends Controller {
 
             // List action assigned to role
             $this->data['action_user'] = $this->actionUser;
-            
+
             $this->data['menu'] = $this->model->getMenu(1, false, $this->currentModule['nama_module']);
 
             $this->data['breadcrumb'] = ['Home' => $this->config->baseURL, $this->currentModule['judul_module'] => $this->moduleURL];
@@ -135,6 +135,15 @@ class BaseController extends Controller {
         }
     }
 
+    private function cekHakBukaModul($moduleRole) {
+        if ($moduleRole) {
+            $id_role = $this->session->get('user')['id_role'];
+            return (key_exists($id_role, $moduleRole));
+        }
+        
+        return false;
+    }
+
     private function getListAction() {
         $id_role = $this->session->get('user')['id_role'];
 
@@ -147,6 +156,7 @@ class BaseController extends Controller {
                 }
                 if ($this->currentModule['nama_module'] != 'login') {
 
+//                    print_r($this->moduleRole); exit;
                     if (!key_exists($id_role, $this->moduleRole)) {
                         $this->setCurrentModule('error');
                         $this->data['msg']['status'] = 'error';
@@ -201,6 +211,8 @@ class BaseController extends Controller {
                 echo view($file_item, $data);
             }
         } else {
+            $query = $this->model->getModuleRole(15);
+            $data['boleh_setting'] = $this->cekHakBukaModul($query);
             echo view('themes/modern/header.php', $data);
             echo view('themes/modern/' . $file, $data);
             echo view('themes/modern/footer.php');
@@ -287,10 +299,10 @@ class BaseController extends Controller {
             }
         }
     }
-    
+
     protected function cekHakAksesAja($action) {
         $allowed = $this->actionUser[$action];
-        
+
         return $allowed;
     }
 
@@ -344,7 +356,7 @@ class BaseController extends Controller {
     public function whereOwn($column = null, $column_check = null) {
         if (!$column)
             $column = $this->config->checkRoleAction['field'];
-        
+
         if (!$column_check)
             $column_check = $_SESSION['user']['id_user'];
 
