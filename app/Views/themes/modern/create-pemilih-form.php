@@ -16,7 +16,7 @@
             'url' => $config->baseURL . $current_module['nama_module'],
             'icon' => 'fa fa-arrow-circle-left',
 //            'label' => $current_module['judul_module']
-            'label' => 'Daftar Relawan'
+            'label' => 'Daftar Pemilih'
         ]);
         ?>
         <hr/>
