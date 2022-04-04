@@ -53,6 +53,8 @@ class User extends \App\Controllers\BaseController {
         if (!$data['users']) {
             $data['msg'] = ['status' => 'error', 'message' => 'Data user tidak ditemukan'];
         }
+        
+        $this->data['boleh_tambah'] = $this->cekHakAksesAja('create_data');
 
         $this->setData();
         $this->view('builtin/user/result.php', array_merge($data, $this->data));
