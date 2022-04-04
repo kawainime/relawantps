@@ -92,15 +92,15 @@ class Create_relawan extends \App\Controllers\BaseController {
                 $data = array_merge($data, $data_relawan);
             }
         }
-        
+
         $data['caleg'] = $this->modCaleg->getCalegByIdUser($this->session->get('user')['id_user']);
-        
+
         $query = $this->modProv->getProvinsiById($data['caleg']['id_prov']);
         $data['caleg']['provinsi'] = $query['nama'];
-        
+
         $query = $this->modKab->getKabupatenById($data['caleg']['id_kab']);
         $data['caleg']['kabupaten'] = $query['nama'];
-        
+
         $dapil = $data['caleg']['id_dapil'];
         $query = $this->modKec->getKecamatan(" where dapil like '%,$dapil]' or dapil like '[$dapil,%' or dapil like '%,$dapil,%'");
 
@@ -175,18 +175,18 @@ class Create_relawan extends \App\Controllers\BaseController {
         }
 
         $data_relawan = $this->model->getRelawanByIdUser($_GET['id']);
-        
+
         if (empty($data_relawan)) {
             $this->errorDataNotFound();
         }
-        
+
         $qKec = $this->modKec->getKecamatanById($data_relawan['id_kec']);
         $qKel = $this->modKel->getKelurahanById($data_relawan['id_kel']);
         $data_relawan['kecamatan'] = $qKec['nama'];
         $data_relawan['kelurahan'] = $qKel['nama'];
-        
+
         $data = array_merge($data, $data_relawan);
-        
+
         $data['id_relawan'] = $_GET['id'];
         $this->view('create-relawan-pemilih-result.php', $data);
     }
@@ -227,29 +227,33 @@ class Create_relawan extends \App\Controllers\BaseController {
 //        foreach ($query as $key => $val) {
 //            $data['prov'][$val['id']] = $val['nama'];
 //        }
-
 //        $data_relawan = $this->model->getViewRelawanById($_GET['id']);
 //        if (empty($data_relawan)) {
 //            $this->errorDataNotFound();
 //        }
 
         $data_relawan = $this->model->getRelawanById($_GET['id']);
-        
+
         if (empty($data_relawan)) {
             $this->errorDataNotFound();
         }
-        
+
         $qProv = $this->modProv->getProvinsiById($data_relawan['id_prov']);
         $qKab = $this->modKab->getKabupatenById($data_relawan['id_kab']);
         $qKec = $this->modKec->getKecamatanById($data_relawan['id_kec']);
         $qKel = $this->modKel->getKelurahanById($data_relawan['id_kel']);
-        $qUser = $this->modUser->getPenggunaById($data_relawan['id_user']);
+        if ($data_relawan['id_user']) {
+            $qUser = $this->modUser->getPenggunaById($data_relawan['id_user']);
+            $data_relawan['email'] = $qUser['email'];
+        } else {
+            $data_relawan['email'] = '';
+        }
+
         $data_relawan['provinsi'] = $qProv['nama'];
         $data_relawan['kabupaten'] = $qKab['nama'];
         $data_relawan['kecamatan'] = $qKec['nama'];
         $data_relawan['kelurahan'] = $qKel['nama'];
-        $data_relawan['email'] = $qUser['email'];
-        
+
         $data = array_merge($data, $data_relawan);
 
         $this->view('create-relawan-reg', $data);
@@ -267,7 +271,7 @@ class Create_relawan extends \App\Controllers\BaseController {
 
         $query = $this->modPemilih->getListData($this->whereOwn('id_relawan', $id_relawan));
         $result['recordsFiltered'] = $query['total_filtered'];
-        
+
         $qProv = $this->modProv->getProvinsi(" where id > 0");
         $qKab = $this->modKab->getKabupaten(" where parent_id = $filterid");
 
@@ -281,7 +285,7 @@ class Create_relawan extends \App\Controllers\BaseController {
 //            if (array_key_exists($val['id_user'], $foto)) {
 //                
 //            }
-            
+
             if ($val['avatar']) {
                 if (file_exists('public/images/pemilih/' . $val['avatar'])) {
                     $image = $val['avatar'];
@@ -315,15 +319,15 @@ class Create_relawan extends \App\Controllers\BaseController {
         $num_data = $this->model->countAllData($this->whereOwn('id_caleg'));
         $result['draw'] = $start = $this->request->getPost('draw') ?: 1;
         $result['recordsTotal'] = $num_data;
-        
+
         $data['caleg'] = $this->modCaleg->getCalegByIdUser($this->session->get('user')['id_user']);
-        
+
         $query = $this->modProv->getProvinsiById($data['caleg']['id_prov']);
         $provinsi = $query['nama'];
-        
+
         $query = $this->modKab->getKabupatenById($data['caleg']['id_kab']);
         $kabupaten = $query['nama'];
-        
+
         $dapil = $data['caleg']['id_dapil'];
         $query = $this->modKec->getKecamatan(" where dapil like '%,$dapil]' or dapil like '[$dapil,%' or dapil like '%,$dapil,%'");
 
@@ -332,7 +336,7 @@ class Create_relawan extends \App\Controllers\BaseController {
         foreach ($query as $key => $val) {
             $kec[$val['id']] = $val['nama'];
         }
-        
+
         $query = $this->modKel->getKelurahan(" where dapil like '%,$dapil]' or dapil like '[$dapil,%' or dapil like '%,$dapil,%'");
         $kel = array();
         foreach ($query as $key => $val) {
@@ -361,7 +365,7 @@ class Create_relawan extends \App\Controllers\BaseController {
 //            if (array_key_exists($val['id_user'], $foto)) {
 //                
 //            }
-            
+
             if ($val['avatar']) {
                 if (file_exists('public/images/user/' . $val['avatar'])) {
                     $image = $val['avatar'];
@@ -374,19 +378,19 @@ class Create_relawan extends \App\Controllers\BaseController {
             $val['ignore_search_urut'] = $no;
             $val['provinsi'] = $provinsi;
             $val['kabupaten'] = $kabupaten;
-            
+
             if (isset($kec[$val['id_kec']]))
                 $val['kecamatan'] = $kec[$val['id_kec']];
             else {
                 $val['kecamatan'] = '';
             }
-            
+
             if (isset($kel[$val['id_kel']]))
                 $val['kelurahan'] = $kel[$val['id_kel']];
             else {
                 $val['kelurahan'] = '';
             }
-            
+
             $val['ignore_search_action'] = btn_action([
                 'pilih' => ['url' => $this->config->baseURL . $this->currentModule['nama_module'] . '/pilih?id=' . $val['id']],
                 'pemilih' => ['url' => $this->config->baseURL . $this->currentModule['nama_module'] . '/pemilih?id=' . $val['id_user'], 'btn_class' => 'btn btn-primary', 'icon' => 'fa-user-friends', 'text' => 'Pemilih', 'hide' => empty($val['id_user'])],
