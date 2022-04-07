@@ -13,6 +13,20 @@ class KecamatanModel extends \App\Models\BaseModel {
         $result = $this->dbpemilu->query($sql)->getResultArray();
         return $result;
     }
+    
+    public function getKecamatanPemilih() {
+        $sql = 'SELECT id_kec FROM pemilih group by id_kec';
+        $result = $this->db->query($sql)->getResultArray();
+        $aProv = array();
+        foreach ($result as $key => $value) {
+            $aProv[] = $value['id_kec'];
+        }
+        $prov = implode(',', $aProv);
+        
+        $result = $this->getKecamatan(" where id in ($prov)");
+        
+        return $result;
+    }
 
     public function getKecamatanById($id) {
         $sql = 'SELECT * FROM wil_kec WHERE id = ?';
