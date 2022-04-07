@@ -13,6 +13,20 @@ class KabupatenModel extends \App\Models\BaseModel {
         $result = $this->dbpemilu->query($sql)->getResultArray();
         return $result;
     }
+    
+    public function getKabupatenPemilih() {
+        $sql = 'SELECT id_kab FROM pemilih group by id_kab';
+        $result = $this->db->query($sql)->getResultArray();
+        $aProv = array();
+        foreach ($result as $key => $value) {
+            $aProv[] = $value['id_kab'];
+        }
+        $prov = implode(',', $aProv);
+        
+        $result = $this->getKabupaten(" where id in ($prov)");
+        
+        return $result;
+    }
 
     public function getKabupatenById($id) {
         $sql = 'SELECT * FROM wil_kab WHERE id = ?';
