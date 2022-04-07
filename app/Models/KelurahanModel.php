@@ -13,6 +13,20 @@ class KelurahanModel extends \App\Models\BaseModel {
         $result = $this->dbpemilu->query($sql)->getResultArray();
         return $result;
     }
+    
+    public function getKelurahanPemilih() {
+        $sql = 'SELECT id_kel FROM pemilih group by id_kel';
+        $result = $this->db->query($sql)->getResultArray();
+        $aProv = array();
+        foreach ($result as $key => $value) {
+            $aProv[] = $value['id_kel'];
+        }
+        $prov = implode(',', $aProv);
+        
+        $result = $this->getKelurahan(" where id in ($prov)");
+        
+        return $result;
+    }
 
     public function getKelurahanById($id) {
         $sql = 'SELECT * FROM wil_kel WHERE id = ?';
