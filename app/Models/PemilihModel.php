@@ -22,7 +22,7 @@ class PemilihModel extends \App\Models\BaseModel {
     public function __construct() {
         parent::__construct();
         $this->fotoPath = 'public/images/foto/';
-        
+
         $this->modProv = new ProvinsiModel;
         $this->modKab = new KabupatenModel;
         $this->modKec = new KecamatanModel;
@@ -45,6 +45,12 @@ class PemilihModel extends \App\Models\BaseModel {
         return $result;
     }
 
+    public function getPemilih($where) {
+        $sql = 'SELECT * FROM pemilih' . $where;
+        $result = $this->db->query($sql)->getResultArray();
+        return $result;
+    }
+
     public function getPemilihById($id) {
         $sql = 'SELECT * FROM pemilih WHERE id = ?';
         $result = $this->db->query($sql, trim($id))->getRowArray();
@@ -58,7 +64,7 @@ class PemilihModel extends \App\Models\BaseModel {
         $result['kabupaten'] = $kab['nama'];
         $result['kecamatan'] = $kec['nama'];
         $result['kelurahan'] = $kel['nama'];
-        
+
         return $result;
     }
 
@@ -173,7 +179,13 @@ class PemilihModel extends \App\Models\BaseModel {
 
                 $data_db['created'] = date('Y-m-d H:i:s');
                 $data_db['id_user_input'] = $_SESSION['user']['id_user'];
-                $data_db['id_relawan'] = $_SESSION['user']['id_user'];
+                
+                if ($_SESSION['user']['id_role'] == 13) {
+                    $data_db['id_relawan'] = $_SESSION['user']['id_user'];
+                } elseif ($_SESSION['user']['id_role'] == 12) {
+                    $data_db['id_relawan'] = $_POST['id_relawan'];
+                }
+                
                 $query = $this->db->table('pemilih')->insert($data_db);
                 $result['id'] = '';
                 if ($query) {
@@ -377,7 +389,8 @@ class PemilihModel extends \App\Models\BaseModel {
     }
 
     public function countAllData($where) {
-        $sql = 'SELECT COUNT(*) AS jml FROM pemilih' . $where;
+//        $sql = 'SELECT COUNT(*) AS jml FROM pemilih' . $where;
+        $sql = 'SELECT COUNT(*) AS jml FROM pemilih ur join user_relawan ur2 on ur2.id_user = ur.id_relawan' . $where;
         $result = $this->db->query($sql)->getRow();
         return $result->jml;
     }
@@ -521,27 +534,42 @@ class PemilihModel extends \App\Models\BaseModel {
         // Query Total Filtered
         // $sql = 'SELECT COUNT(*) AS jml_data FROM mahasiswa ' . $where;
         $total_filtered = $this->db
-                ->table('pemilih')
+                ->table('v_pemilih_new')
                 ->where(str_replace('WHERE', '', $where))
                 ->countAllResults();
 
-        $relawan = $this->modRel->getRelawanByIdUser($_SESSION['user']['id_user']);
-        
-        $prov = $this->modProv->getProvinsiById($relawan['id_prov']);
-        $kab = $this->modKab->getKabupatenById($relawan['id_kab']);
-        $kec = $this->modKec->getKecamatanById($relawan['id_kec']);
-        $kel = $this->modKel->getKelurahanById($relawan['id_kel']);
+//        $relawan = $this->modRel->getRelawanByIdUser($_SESSION['user']['id_user']);
+
+        $provs = $this->modProv->getProvinsiPemilih();
+        foreach ($provs as $key => $value) {
+            $prov[$value['id']] = $value['nama'];
+        }
+
+        $kabs = $this->modKab->getKabupatenPemilih();
+        foreach ($kabs as $key => $value) {
+            $kab[$value['id']] = $value['nama'];
+        }
+
+        $kecs = $this->modKec->getKecamatanPemilih();
+        foreach ($kecs as $key => $value) {
+            $kec[$value['id']] = $value['nama'];
+        }
+
+        $kels = $this->modKel->getKelurahanPemilih();
+        foreach ($kels as $key => $value) {
+            $kel[$value['id']] = $value['nama'];
+        }
         // Query Data
 //        print_r($kel); exit;
-        $sql = 'SELECT * FROM pemilih 
+        $sql = 'SELECT * FROM v_pemilih_new 
 				' . $where . $order;
         $data = $this->db->query($sql)->getResultArray();
-        
+
         foreach ($data as $key => $value) {
-            $data[$key]['provinsi'] = $prov['nama'];
-            $data[$key]['kabupaten'] = $kab['nama'];
-            $data[$key]['kecamatan'] = $kec['nama'];
-            $data[$key]['kelurahan'] = $kel['nama'];
+            $data[$key]['provinsi'] = $prov[$value['id_prov']];
+            $data[$key]['kabupaten'] = $kab[$value['id_kab']];
+            $data[$key]['kecamatan'] = $kec[$value['id_kec']];
+            $data[$key]['kelurahan'] = $kel[$value['id_kel']];
         }
 
         return ['data' => $data, 'total_filtered' => $total_filtered];
