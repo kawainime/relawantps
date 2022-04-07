@@ -7,6 +7,7 @@
 jQuery(document).ready(function () {
 
     $(".select2").select2();
+    $(".selectrelawan").val('').trigger('change');
 
     var mytable = document.getElementById("table-result");
 
@@ -127,22 +128,14 @@ jQuery(document).ready(function () {
         });
     });
     
-    $("#noTps").on("change", function(e) {
-        kelid = $("#id_kel").val();
-        provid = $("#id_prov").val();
-        kabid = $("#id_kab").val();
-        kecid = $("#id_kec").val();
-        noTps = $("#noTps").val();
+    $("#id_relawan").on("change", function(e) {
+        id_relawan = $("#id_relawan").val();
         //        alert(provid);
         $.ajax({
             type: "GET",
-            url: module_url + '/getDataDpt',
+            url: module_url + '/getDataPemilih',
             data: {
-                filterid: noTps,
-                idkel: kelid,
-                idprov: provid,
-                idkab: kabid,
-                idkec: kecid,
+                filterid: id_relawan,
             },
             success: function(response) {
                 if (response.length > 0) {
