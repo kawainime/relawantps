@@ -2,15 +2,33 @@
 
 namespace App\Models;
 
+//use App\Models\PemilihModel;
+
 class ProvinsiModel extends \App\Models\BaseModel {
 
     public function __construct() {
         parent::__construct();
+        
+//        $this->modPemilih = new PemilihModel;
     }
 
     public function getProvinsi($where) {
         $sql = 'SELECT * FROM wil_pro' . $where;
         $result = $this->dbpemilu->query($sql)->getResultArray();
+        return $result;
+    }
+    
+    public function getProvinsiPemilih() {
+        $sql = 'SELECT id_prov FROM pemilih group by id_prov';
+        $result = $this->db->query($sql)->getResultArray();
+        $aProv = array();
+        foreach ($result as $key => $value) {
+            $aProv[] = $value['id_prov'];
+        }
+        $prov = implode(',', $aProv);
+        
+        $result = $this->getProvinsi(" where id in ($prov)");
+        
         return $result;
     }
 
