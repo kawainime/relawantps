@@ -74,6 +74,7 @@ class Create_pemilih extends \App\Controllers\BaseController {
         $data['breadcrumb']['Add'] = '';
 
         $data['msg'] = [];
+        $data['idrelawan'] = '';
         if (isset($_POST['submit'])) {
             $form_errors = false;
 
@@ -90,22 +91,33 @@ class Create_pemilih extends \App\Controllers\BaseController {
                 $data = array_merge($data, $data_relawan);
             }
         }
-        
+
+        if ($_SESSION['user']['id_role'] == 13) {
 //        $data['relawan'] = $this->modRelawan->getViewRelawanByIdUser($this->session->get('user')['id_user']);
-        $data['relawan'] = $this->modRelawan->getRelawanByIdUser($this->session->get('user')['id_user']);
+            $data['relawan'] = $this->modRelawan->getRelawanByIdUser($this->session->get('user')['id_user']);
 //        $dapil = $data['caleg']['id_dapil'];
 
-        $query = $this->modRD->getRdppDpt($data['relawan']['id_prov'], $data['relawan']['id_kab'], " where idKec = ".$data['relawan']['id_kec']." and idKel = ".$data['relawan']['id_kel']." and noTps = ".$data['relawan']['noTps']." and idDpt <> '".$data['relawan']['idDpt']."'");
-        
+            $query = $this->modRD->getRdppDpt($data['relawan']['id_prov'], $data['relawan']['id_kab'], " where idKec = " . $data['relawan']['id_kec'] . " and idKel = " . $data['relawan']['id_kel'] . " and noTps = " . $data['relawan']['noTps'] . " and idDpt <> '" . $data['relawan']['idDpt'] . "'");
+
 //        $query = $this->modKec->getKecamatan(" where dapil like '%,$dapil]' or dapil like '[$dapil,%' or dapil like '%,$dapil,%'");
-
 //        $query = $this->modProv->getProvinsi(" where id = 41863");
-        $data['dpt'][''] = '';
-        foreach ($query as $key => $val) {
-            $data['dpt'][$val['idDpt']] = $val['nama'].' - '.$val['nik'];
-        }
+            $data['dpt'][''] = '';
+            foreach ($query as $key => $val) {
+                $data['dpt'][$val['idDpt']] = $val['nama'] . ' - ' . $val['nik'];
+            }
 
-        $this->view('create-pemilih-form.php', $data);
+            $this->view('create-pemilih-form.php', $data);
+        } elseif ($_SESSION['user']['id_role'] == 12) {
+            $data['caleg'] = $this->modCaleg->getCalegByIdUser($this->session->get('user')['id_user']);
+            $query = $this->modRelawan->getRelawan(" where id_caleg = " . $this->session->get('user')['id_user'] . " and id_user is not null");
+            $data['relawan'][''] = '';
+            foreach ($query as $key => $val) {
+                $data['relawan'][$val['id_user']] = $val['nama'] . ' - ' . $val['nik'];
+            }
+//            print_r($data['relawan']); exit;
+
+            $this->view('create-pemilih-caleg-form.php', $data);
+        }
     }
 
     public function edit() {
@@ -189,7 +201,6 @@ class Create_pemilih extends \App\Controllers\BaseController {
 //        foreach ($query as $key => $val) {
 //            $data['prov'][$val['id']] = $val['nama'];
 //        }
-
 //        $data_pemilih = $this->model->getViewPemilihById($_GET['id']);
         $data_pemilih = $this->model->getPemilihById($_GET['id']);
         if (empty($data_pemilih)) {
@@ -201,15 +212,27 @@ class Create_pemilih extends \App\Controllers\BaseController {
     }
 
     public function getDataDT() {
+        if ($_SESSION['user']['id_role'] == 13)
+            $this->cekHakAkses('read_data', 'pemilih|id_relawan');
+        elseif ($_SESSION['user']['id_role'] == 12) {
+            $this->cekHakAkses('read_data', 'v_pemilih_new|id_caleg');
+        }
 
-        $this->cekHakAkses('read_data', 'pemilih|id_relawan');
-
-        $num_data = $this->model->countAllData($this->whereOwn('id_relawan'));
+        if ($_SESSION['user']['id_role'] == 13)
+            $num_data = $this->model->countAllData($this->whereOwn('id_relawan'));
+        elseif ($_SESSION['user']['id_role'] == 12) {
+            $num_data = $this->model->countAllData($this->whereOwn('id_caleg'));
+        }
         $result['draw'] = $start = $this->request->getPost('draw') ?: 1;
         $result['recordsTotal'] = $num_data;
 
 //        $query = $this->model->getListViewData($this->whereOwn('id_relawan'));
-        $query = $this->model->getListData($this->whereOwn('id_relawan'));
+        if ($_SESSION['user']['id_role'] == 13)
+            $query = $this->model->getListData($this->whereOwn('id_relawan'));
+        elseif ($_SESSION['user']['id_role'] == 12) {
+            $query = $this->model->getListData($this->whereOwn('id_caleg'));
+        }
+//        $query = $this->model->getListData($this->whereOwn('id_relawan'));
         $result['recordsFiltered'] = $query['total_filtered'];
 
         helper('html');
@@ -222,7 +245,7 @@ class Create_pemilih extends \App\Controllers\BaseController {
 //            if (array_key_exists($val['id_user'], $foto)) {
 //                
 //            }
-            
+
             if ($val['avatar']) {
                 if (file_exists('public/images/pemilih/' . $val['avatar'])) {
                     $image = $val['avatar'];
@@ -355,6 +378,52 @@ class Create_pemilih extends \App\Controllers\BaseController {
 
         $html .= '$("select#noTps").html("' . $select . '");';
 //        $html .= '$("input[name=\'' . $csrf_token['name'] . '\']").val("' . $_COOKIE[$csrf_token['name']] . '");';
+        echo $html;
+    }
+
+    public function getDataPemilih() {
+        $filterid = $_GET['filterid'];
+
+        $html = '';
+
+        if ($filterid) {
+            $relawan = $this->modRelawan->getRelawanByIdUser($filterid);
+
+            $items = $this->modRD->getRdppDpt($relawan['id_prov'], $relawan['id_kab'], " where idKec = " . $relawan['id_kec'] . " and idKel = " . $relawan['id_kel'] . " and noTps = " . $relawan['noTps']);
+
+            $kec = $this->modKec->getKecamatanById($relawan['id_kec']);
+            $kel = $this->modKel->getKelurahanById($relawan['id_kel']);
+
+            $html .= '$("#nama_kec").val("' . $kec['nama'] . '");';
+            $html .= '$("#nama_kel").val("' . $kel['nama'] . '");';
+            $html .= '$("#id_kec").val("' . $relawan['id_kec'] . '");';
+            $html .= '$("#id_kel").val("' . $relawan['id_kel'] . '");';
+            $html .= '$("#noTps").val("' . $relawan['noTps'] . '");';
+
+            $select = '<option value=\"\"></option>';
+//        $html .= '$("select#id_kec").html("' . $select . '");';
+//        $html .= '$("select#id_kel").html("' . $select . '");';
+//        $html .= '$("#jmltps").val(0);';
+//        $html .= '$("#butuhsuara").val(0);';
+
+            foreach ($items as $list) :
+                $select .= "<option value='" . $list['idDpt'] . "'>" . $list['nama'] . ' - ' . $list['nik'] . "</option>";
+            endforeach;
+
+            $html .= '$("select#idDpt").html("' . $select . '");';
+//        $html .= '$("input[name=\'' . $csrf_token['name'] . '\']").val("' . $_COOKIE[$csrf_token['name']] . '");';
+        } else {
+            $html .= '$("#nama_kec").val("");';
+            $html .= '$("#nama_kel").val("");';
+            $html .= '$("#id_kec").val("");';
+            $html .= '$("#id_kel").val("");';
+            $html .= '$("#noTps").val("");';
+
+            $select = '<option value=\"\"></option>';
+
+            $html .= '$("select#idDpt").html("' . $select . '");';
+        }
+        
         echo $html;
     }
 
