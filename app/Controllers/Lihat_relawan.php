@@ -17,6 +17,7 @@ use App\Models\LihatrelawanModel;
 use App\Models\ProvinsiModel;
 use App\Models\KabupatenModel;
 use App\Models\RdppDptModel;
+use App\Models\RelawanModel;
 
 class Lihat_relawan extends BaseController {
 
@@ -31,6 +32,7 @@ class Lihat_relawan extends BaseController {
         $this->modKel = new KelurahanModel;
         $this->modTps = new RdppDptModel;
         $this->modelLR = new LihatrelawanModel;
+        $this->modelRel = new RelawanModel;
 
         $this->addJs($this->config->baseURL . 'public/vendors/chartjs/Chart.bundle.min.js');
         $this->addStyle($this->config->baseURL . 'public/vendors/chartjs/Chart.min.css');
@@ -119,6 +121,8 @@ class Lihat_relawan extends BaseController {
 
             $kel = $this->modKel->getKelurahanById($_GET['id_kel']);
             $this->data['label'] = "Kelurahan " . $kel['nama'];
+            $this->data['kec_id'] = $_GET['id_kec'];
+            $this->data['kel_id'] = $_GET['id_kel'];
         } elseif (!empty($_GET['id_kec'])) {
 //            $relawan = $this->modelLR->getRelawanKecamatanPerCaleg($_GET['id_kec'], $this->session->get('user')['id_user'], $dapil);
 
@@ -153,6 +157,7 @@ class Lihat_relawan extends BaseController {
 
             $kec = $this->modKec->getKecamatanById($_GET['id_kec']);
             $this->data['label'] = "Kecamatan " . $kec['nama'];
+            $this->data['kec_id'] = $_GET['id_kec'];
         } else {
 //            $relawan = $this->modelLR->getRelawanKabupatenPerCaleg($this->data['caleg']['id_kab'], $this->session->get('user')['id_user'], $dapil);
 
@@ -221,6 +226,112 @@ class Lihat_relawan extends BaseController {
         $html .= '$("select#id_kel").html("' . $select . '");';
 //        $html .= '$("input[name=\'' . $csrf_token['name'] . '\']").val("' . $_COOKIE[$csrf_token['name']] . '");';
         echo $html;
+    }
+
+    public function getDataDT() {
+//        print_r('masuk'); exit;
+
+        $this->cekHakAkses('read_data', 'user_relawan|id_caleg');
+
+        $where = $this->whereOwn('id_caleg');
+        
+        if ($this->request->getPost('kec_id')) {
+            $where .= " and id_kec = ".$this->request->getPost('kec_id');
+        }
+        
+        if ($this->request->getPost('kel_id')) {
+            $where .= " and id_kel = ".$this->request->getPost('kel_id');
+        }
+        
+        $num_data = $this->modelRel->countAllData($where);
+        $result['draw'] = $start = $this->request->getPost('draw') ?: 1;
+        $result['recordsTotal'] = $num_data;
+
+        $data['caleg'] = $this->modCaleg->getCalegByIdUser($this->session->get('user')['id_user']);
+
+        $query = $this->modProv->getProvinsiById($data['caleg']['id_prov']);
+        $provinsi = $query['nama'];
+
+        $query = $this->modKab->getKabupatenById($data['caleg']['id_kab']);
+        $kabupaten = $query['nama'];
+
+        $dapil = $data['caleg']['id_dapil'];
+        $query = $this->modKec->getKecamatan(" where dapil like '%,$dapil]' or dapil like '[$dapil,%' or dapil like '%,$dapil,%'");
+
+//        $query = $this->modProv->getProvinsi(" where id = 41863");
+        $kec = array();
+        foreach ($query as $key => $val) {
+            $kec[$val['id']] = $val['nama'];
+        }
+
+        $query = $this->modKel->getKelurahan(" where dapil like '%,$dapil]' or dapil like '[$dapil,%' or dapil like '%,$dapil,%'");
+        $kel = array();
+        foreach ($query as $key => $val) {
+            $kel[$val['id']] = $val['nama'];
+        }
+
+//        $query = $this->model->getListViewData($this->whereOwn('id_caleg'));
+        $query = $this->modelRel->getListViewDataNew($where);
+        $result['recordsFiltered'] = $query['total_filtered'];
+
+        helper('html');
+        $id_user = $this->session->get('user')['id_user'];
+
+//        $users = $this->model->getUserRelawan(" where id_user in (select ur.id_user from user_relawan ur where ur.id_caleg = $id_user and ur.id_user is not null)");
+//        $foto = array();
+//        foreach ($users as $key => $user) {
+//            if ($user['avatar']) {
+//                $foto[$user['id_user']] = $user['avatar'];
+//            }
+//        }
+
+        $no = $this->request->getPost('start') + 1 ?: 1;
+        foreach ($query['data'] as $key => &$val) {
+            $image = 'noimage.png';
+
+//            if (array_key_exists($val['id_user'], $foto)) {
+//                
+//            }
+
+            if ($val['avatar']) {
+                if (file_exists('public/images/user/' . $val['avatar'])) {
+                    $image = $val['avatar'];
+                }
+            }
+
+            $val['ignore_search_foto'] = '<div class="list-foto"><img src="' . $this->config->baseURL . 'public/images/user/' . $image . '"/></div>';
+//            $val['tgl_lahir'] = $val['tempat_lahir'] . ', ' . format_tanggal($val['tgl_lahir']);
+
+            $val['ignore_search_urut'] = $no;
+            $val['ignore_search_provinsi'] = $provinsi;
+            $val['ignore_search_kabupaten'] = $kabupaten;
+
+            if (isset($kec[$val['id_kec']]))
+                $val['ignore_search_kecamatan'] = $kec[$val['id_kec']];
+            else {
+                $val['ignore_search_kecamatan'] = '';
+            }
+
+            if (isset($kel[$val['id_kel']]))
+                $val['ignore_search_kelurahan'] = $kel[$val['id_kel']];
+            else {
+                $val['ignore_search_kelurahan'] = '';
+            }
+
+//            $val['ignore_search_action'] = btn_action([
+//                'pilih' => ['url' => $this->config->baseURL . $this->currentModule['nama_module'] . '/pilih?id=' . $val['id']],
+//                'pemilih' => ['url' => $this->config->baseURL . $this->currentModule['nama_module'] . '/pemilih?id=' . $val['id_user'], 'btn_class' => 'btn btn-primary', 'icon' => 'fa-user-friends', 'text' => 'Pemilih', 'hide' => empty($val['id_user'])],
+//                , 'delete' => ['url' => ''
+//                    , 'id' => $val['id']
+//                    , 'delete-title' => 'Hapus data Relawan: <strong>' . $val['nama'] . '</strong> ?'
+//                ]
+//            ]);
+            $no++;
+        }
+
+        $result['data'] = $query['data'];
+        echo json_encode($result);
+        exit();
     }
 
 }
