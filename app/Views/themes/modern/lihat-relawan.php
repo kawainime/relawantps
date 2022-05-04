@@ -68,7 +68,7 @@
         if ($message['status'] == 'ok') {
             ?>
             <div class="row mb-3">
-                <div class="col-12 col-md-12 col-lg-12 col-xl-6" style="overflow-x:auto">
+                <div class="col-12 col-md-12 col-lg-12" style="overflow-x:auto">
                     <canvas id="bar-container" height="400px" style="min-width:500px;margin:auto;width:100%"></canvas>
                 </div>
                 <!--                <div class="col-12 col-md-12 col-lg-12 col-xl-6" style="overflow-x:auto">
@@ -120,14 +120,14 @@
                     type: 'bar',
                     data: barChartData,
                     options: {
-                        responsive: false,
+                        responsive: true,
                         legend: {
                             display: false,
                             labels: {
 
                             }
                         },
-                        maintainAspectRatio: false,
+                        maintainAspectRatio: true,
                         title: {
                             display: true,
                             text: 'Grafik Relawan <?= $label ?>',
