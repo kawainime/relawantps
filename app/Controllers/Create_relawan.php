@@ -393,7 +393,7 @@ class Create_relawan extends \App\Controllers\BaseController {
 
             $val['ignore_search_action'] = btn_action([
                 'pilih' => ['url' => $this->config->baseURL . $this->currentModule['nama_module'] . '/pilih?id=' . $val['id']],
-                'pemilih' => ['url' => $this->config->baseURL . $this->currentModule['nama_module'] . '/pemilih?id=' . $val['id_user'], 'btn_class' => 'btn btn-primary', 'icon' => 'fa-user-friends', 'text' => 'Pemilih', 'hide' => empty($val['id_user'])],
+//                'pemilih' => ['url' => $this->config->baseURL . $this->currentModule['nama_module'] . '/pemilih?id=' . $val['id_user'], 'btn_class' => 'btn btn-primary', 'icon' => 'fa-user-friends', 'text' => 'Pemilih', 'hide' => empty($val['id_user'])],
 //                , 'delete' => ['url' => ''
 //                    , 'id' => $val['id']
 //                    , 'delete-title' => 'Hapus data Relawan: <strong>' . $val['nama'] . '</strong> ?'
