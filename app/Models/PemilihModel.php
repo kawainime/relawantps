@@ -390,7 +390,8 @@ class PemilihModel extends \App\Models\BaseModel {
 
     public function countAllData($where) {
 //        $sql = 'SELECT COUNT(*) AS jml FROM pemilih' . $where;
-        $sql = 'SELECT COUNT(*) AS jml FROM pemilih ur join user_relawan ur2 on ur2.id_user = ur.id_relawan' . $where;
+//        $sql = 'SELECT COUNT(*) AS jml FROM pemilih ur join user_relawan ur2 on ur2.id_user = ur.id_relawan' . $where;
+        $sql = 'SELECT COUNT(*) AS jml FROM v_pemilih_new' . $where;
         $result = $this->db->query($sql)->getRow();
         return $result->jml;
     }
