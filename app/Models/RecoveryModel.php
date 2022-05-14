@@ -57,7 +57,7 @@ class RecoveryModel extends \App\Models\BaseModel
 			helper('email_registrasi');
 			$email_config = new \Config\EmailConfig;
 			$email_data = array('from_email' => $email_config->from
-							, 'from_title' => 'Jagowebdev'
+							, 'from_title' => 'Admin Relawan TPS'
 							, 'to_email' => $_POST['email']
 							, 'to_name' => $_POST['email']
 							, 'email_subject' => 'Reset Password'
