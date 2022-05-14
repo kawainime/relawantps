@@ -9,9 +9,9 @@ class EmailConfig {
     // public $provider = 'AmazonSES';
 
     public $client = ['standard' => [
-            'host' => 'mail.jagowebdev.com'
-            , 'username' => 'support@jagowebdev.com'
-            , 'password' => 'Password'
+            'host' => 'smtp.gmail.com'
+            , 'username' => 'kosud2017@gmail.com'
+            , 'password' => '4lisMerah'
         ]
         , 'google' => ['client_id' => ''
             , 'client_secret' => ''
@@ -22,7 +22,7 @@ class EmailConfig {
         ]
     ];
     // Disesuaikan dengan konfigurasi username
-    public $from = 'support@jagowebdev.com';
-    public $emailSupport = 'support@jagowebdev.com';
+    public $from = 'kosud2017@gmail.com';
+    public $emailSupport = 'kosud2017@gmail.com';
 
 }
