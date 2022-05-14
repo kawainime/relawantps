@@ -9,9 +9,9 @@ class EmailConfig {
     // public $provider = 'AmazonSES';
 
     public $client = ['standard' => [
-            'host' => 'smtp.gmail.com'
-            , 'username' => 'kosud2017@gmail.com'
-            , 'password' => '4lisMerah'
+            'host' => 'mail.relawantps.com'
+            , 'username' => 'admin@relawantps.com'
+            , 'password' => 'relawanTPS99!'
         ]
         , 'google' => ['client_id' => ''
             , 'client_secret' => ''
@@ -22,7 +22,7 @@ class EmailConfig {
         ]
     ];
     // Disesuaikan dengan konfigurasi username
-    public $from = 'kosud2017@gmail.com';
-    public $emailSupport = 'kosud2017@gmail.com';
+    public $from = 'admin@relawantps.com';
+    public $emailSupport = 'admin@relawantps.com';
 
 }
