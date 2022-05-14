@@ -125,9 +125,7 @@ $config = new \Config\EmailConfig;
 	</p>
 	<p>
 	Jika Anda tidak merasa melakukan pendaftaran, mohon abaikan email ini.</p>
-	<p>Jika ada pertanyaan lebih lanjut mengenai email ini, silakan kontak kami di:<br/>
-	<a href="mailto:'.$config->emailSupport.'" target="_blank">'.$config->emailSupport.'</a></p>
-	<p>Regards,<br/>Jagowebdev Team</p>
+	<p>Regards,<br/>Katapedia Team</p>
 </div>
 </body>
 </html>
