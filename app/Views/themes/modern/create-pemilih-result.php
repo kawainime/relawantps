@@ -25,6 +25,8 @@
             , 'kelurahan' => 'Kelurahan/Desa'
             , 'noTps' => 'No. TPS'
             , 'nik_nama_relawan' => 'Relawan'
+            , 'statusket' => 'Status'
+            , 'tipeket' => 'Tipe'
             , 'ignore_search_action' => 'Action'
         ];
 
