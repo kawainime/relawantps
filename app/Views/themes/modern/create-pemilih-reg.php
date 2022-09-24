@@ -84,6 +84,28 @@
                     </div>
                 </div>
                 <div class="row mb-3">
+                    <label class="col-sm-3 col-md-2 col-lg-3 col-xl-2 col-form-label">Status Pemilih</label>
+                    <div class="col-sm-5">
+                        <?php
+                        $optionsStatus['1'] = 'Pasti Memilih';
+                        $optionsStatus['2'] = 'Belum Pasti';
+                        $optionsStatus['3'] = 'Memilih Lainnya';
+                        echo options(['class' => 'form-control select2 kecSelect', 'name' => 'status', 'id' => 'status', 'required' => ''], $optionsStatus, set_value('status', @$status));
+                        ?>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-md-2 col-lg-3 col-xl-2 col-form-label">Tipe Pemilih</label>
+                    <div class="col-sm-5">
+                        <?php
+                        $optionsTipe['1'] = 'Rasional';
+                        $optionsTipe['2'] = 'Emosional';
+                        $optionsTipe['3'] = 'Transaksional';
+                        echo options(['class' => 'form-control select2 kecSelect', 'name' => 'tipe', 'id' => 'tipe', 'required' => ''], $optionsTipe, set_value('tipe', @$tipe));
+                        ?>
+                    </div>
+                </div>
+                <div class="row mb-3">
                     <label class="col-sm-3 col-md-2 col-lg-3 col-xl-2 col-form-label">Foto</label>
                     <div class="col-sm-5">
                         <?php
