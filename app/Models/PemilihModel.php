@@ -115,11 +115,24 @@ class PemilihModel extends \App\Models\BaseModel {
                 $data_db['no_wa'] = $_POST['no_wa'];
             if (isset($_POST['nik']))
                 $data_db['nik'] = $_POST['nik'];
+            if (isset($_POST['status']))
+                $data_db['status'] = $_POST['status'];
+            if (isset($_POST['tipe']))
+                $data_db['tipe'] = $_POST['tipe'];
 
             if (isset($_POST['noTps']))
                 $data_db['noTps'] = $_POST['noTps'];
 
             if ($_POST['id']) {
+                $data_db = [];
+                if (isset($_POST['no_wa']))
+                    $data_db['no_wa'] = $_POST['no_wa'];
+                if (isset($_POST['nik']))
+                    $data_db['nik'] = $_POST['nik'];
+                if (isset($_POST['status']))
+                    $data_db['status'] = $_POST['status'];
+                if (isset($_POST['tipe']))
+                    $data_db['tipe'] = $_POST['tipe'];
                 $data_db['updated'] = date('Y-m-d H:i:s');
                 $data_db['id_user_edit'] = $_SESSION['user']['id_user'];
 
@@ -163,8 +176,8 @@ class PemilihModel extends \App\Models\BaseModel {
                 }
 
                 // Update avatar
-                $data_db = [];
                 $data_db['avatar'] = $new_name;
+//                print_r($data_db); exit;
 
                 $query = $this->db->table('pemilih')->update($data_db, ['id' => $_POST['id']]);
                 if ($query) {
@@ -179,13 +192,13 @@ class PemilihModel extends \App\Models\BaseModel {
 
                 $data_db['created'] = date('Y-m-d H:i:s');
                 $data_db['id_user_input'] = $_SESSION['user']['id_user'];
-                
+
                 if ($_SESSION['user']['id_role'] == 13) {
                     $data_db['id_relawan'] = $_SESSION['user']['id_user'];
                 } elseif ($_SESSION['user']['id_role'] == 12) {
                     $data_db['id_relawan'] = $_POST['id_relawan'];
                 }
-                
+
                 $query = $this->db->table('pemilih')->insert($data_db);
                 $result['id'] = '';
                 if ($query) {
